@@ -1,0 +1,12 @@
+{
+    "CreateUsersTable":"CREATE TABLE IF NOT EXISTS User ( FirstName VARCHAR(255),LastName VARCHAR(255),Email VARCHAR(255) UNIQUE,Password VARCHAR(255),MobileNo VARCHAR(10),  Role ENUM('Admin', 'Agent', 'User') DEFAULT 'User', Address VARCHAR(255))",
+    "InsertUsers":"Insert Into User(FirstName,LastName,Email,Password,MobileNo,Address) values (?,?,?,?,?,?)",
+    "InsertUser":"Insert Into User(FirstName,LastName,Email,Password,MobileNo,Role,Address) values (?,?,?,?,?,?,?)",
+
+    "CreatePolicyTable":"CREATE TABLE IF NOT EXISTS Policy (PolicyId VARCHAR(255),PolicyName VARCHAR(255),Description VARCHAR(500),Premium VARCHAR(255),Coverage VARCHAR(255))",
+    "InsertPolicy":"Insert Into Policy(PolicyId,PolicyName,Description,Premium,Coverage)values(?,?,?,?,?)",
+
+
+    "createLifeinsurancetable":"CREATE TABLE IF NOT EXISTS LifeInsurance (PolicyId,PolicyName,PolicyNo,nomineeName,nomineeAge,nomineeRelation,nomineeAadharnumber,status ENUM('PENDING','ACCEPTED','REJECTED') DEFAULT 'PENDING')",
+    "InsertLifeinsurancetable":"Insert Into LifeInsurance(PolicyId,PolicyName,nomineeName,PolicyNo,nomineeAge,nomineeRelation,nomineeAadharnumber)values(?,?,?,?,?,?,?)"
+}

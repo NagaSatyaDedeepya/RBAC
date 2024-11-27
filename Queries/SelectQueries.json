@@ -1,0 +1,6 @@
+{
+    "loginuser":" SELECT  Password FROM User WHERE Email = ?  ",
+    "viewusers":"Select * from User where Role='User' ",
+    "viewagents":"Select * from User where Role='Agent' ",
+    "viewappliedpolicy":"Select * from  LifeInsurance "
+}

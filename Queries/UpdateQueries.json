@@ -1,0 +1,5 @@
+{
+    "Updateapplication":"UPDATE LifeInsurance SET status = ? WHERE PolicyNo= ?",
+    "Updatepassword":"UPDATE User SET Password=? WHERE Email=?"
+
+}
