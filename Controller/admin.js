@@ -5,31 +5,56 @@ const SQueries=require('../Queries/SelectQueries.json')
 const bcrypt = require('bcrypt');
 
 
-const adminagentregister=async(req,res)=>{
-    try{
-    const{FirstName,LastName,Email,Password,MobileNo,Role,Address}=req.body
-    if(!FirstName||!LastName||!Email||!Password||!MobileNo||!Address){
+const adminagentregister = async (req, res) => {
+    try {
+      const {
+        FirstName,
+        LastName,
+        Email,
+        Password,
+        MobileNo,
+        Role,
+        Address,
+      } = req.body;
+  
+      // Check for missing fields
+      if (!FirstName || !LastName || !Email || !Password || !MobileNo || !Address) {
         res.status(400);
-        throw new Error("All fields required");
-    } 
-    const validRoles = ['Admin', 'Agent', 'User'];
-    const userrole= Role && validRoles.includes(Role) ? Role : 'User';
-    const hashedPassword = await bcrypt.hash(Password, 12); 
-  await connection.query(Queries.CreateUsersTable);
-  await connection.query(Queries.InsertUser[FirstName,
-    LastName,
-    Email,
-    hashedPassword,
-    MobileNo,
-    userrole,
-    Address]);
-    res.status(200).send("user register sucessfully")
-}
-catch(error){
-    console.error("error while adding user",error);
-    res.status(500).json({message:"Error creating user",error})
-}
-}
+        throw new Error("All fields are required");
+      }
+  
+      // Validate role and default to 'User'
+      const validRoles = ["Admin", "Agent", "User"];
+      const userRole = Role && validRoles.includes(Role) ? Role : "User";
+  
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(Password, 12);
+  
+      // Ensure the users table exists
+      await connection.query(Queries.CreateUsersTable);
+  
+      // Prepare the insert query and parameters
+      const insertQuery = Queries.InsertUser;
+      const values = [
+        FirstName,
+        LastName,
+        Email,
+        hashedPassword,
+        MobileNo,
+        userRole,
+        Address,
+      ];
+  
+      // Execute the query
+      await connection.query(insertQuery, values);
+  
+      // Respond with success
+      res.status(200).send("User registered successfully");
+    } catch (error) {
+      console.error("Error while adding user", error);
+      res.status(500).json({ message: "Error creating user", error });
+    }
+  }
 const viewusers=async(req,res)=>{
     try{
         const[rows]=await connection.query(SQueries.viewusers)
