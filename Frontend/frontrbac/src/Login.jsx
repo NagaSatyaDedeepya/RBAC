@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -45,30 +45,45 @@ const LoginForm = () => {
   };
 
   // Redirect based on role if already logged in
-  React.useEffect(() => {
+  useEffect(() => {
     const role = localStorage.getItem("userRole");
     if (role === "Admin") navigate("/admin");
     if (role === "Agent") navigate("/agent");
     if (role === "User") navigate("/user");
   }, [navigate]);
 
+  const handleLogout = () => {
+    // Clear the localStorage
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userRole");
+
+    // Redirect to the login page
+    navigate("/login");
+  };
+
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        name="Email"
-        type="email"
-        placeholder="Email"
-        onChange={handleChange}
-      />
-      <input
-        name="Password"
-        type="password"
-        placeholder="Password"
-        onChange={handleChange}
-      />
-      <button type="submit">Login</button>
-      {message && <p>{message}</p>}
-    </form>
+    <div>
+      {localStorage.getItem("authToken") ? (
+        <button onClick={handleLogout}>Logout</button>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          <input
+            name="Email"
+            type="email"
+            placeholder="Email"
+            onChange={handleChange}
+          />
+          <input
+            name="Password"
+            type="password"
+            placeholder="Password"
+            onChange={handleChange}
+          />
+          <button type="submit">Login</button>
+          {message && <p>{message}</p>}
+        </form>
+      )}
+    </div>
   );
 };
 

@@ -13,7 +13,6 @@ const AgentDashboard = () => {
   return (
     <div>
       <h1>Agent Dashboard</h1>
-      <button onClick={handleAdminRegister}>Register Admin Agent</button>
     </div>
   );
 };
