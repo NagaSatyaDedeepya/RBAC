@@ -30,24 +30,30 @@ catch(error){
 }
 }
 
-const login=async(req,res)=>{
-    try{
-        const{Email,Password}=req.body;
-        if(!Email||!Password){
-            res.status(400);
-            throw new Error("All fields are required");
+const login = async (req, res) => {
+    try {
+        const { Email, Password } = req.body;
+
+        if (!Email || !Password) {
+            return res.status(400).send("All fields are required");
         }
-       const rows= await connection.query(SQueries.loginuser,[Email]);
-    
+
+        // Query to fetch user by email
+        const rows = await connection.query(SQueries.loginuser, [Email]);
+
         if (rows.length === 0) {
-            return res.status(404).send({ error: "user not found." });
+            return res.status(404).send({ error: "User not found." });
         }
+
         const user = rows[0][0];
         console.log(user);
-        if (!user.Password ) {
+
+        if (!user.Password) {
             console.error("Error: No hashed password found in database for user.");
             return res.status(500).json({ error: "Password is missing for this user." });
         }
+
+        // Compare the provided password with the stored hashed password
         const match = await bcrypt.compare(Password, user.Password);
         console.log('User Password:', user.Password);
 
@@ -55,6 +61,7 @@ const login=async(req,res)=>{
             return res.status(401).json({ error: "Incorrect password." });
         }
 
+        // Generate a JWT token with the user data
         const accessToken = jwt.sign(
             {
                 user: {
@@ -62,17 +69,18 @@ const login=async(req,res)=>{
                     Email: user.Email,
                 },
             },
-            process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "1d" }
+            'jwtSecret',  // Use 'jwtSecret' here to sign the token (same as validation)
+            { expiresIn: "1d" } // Token expiration time
         );
-          res.status(200).json({ token: accessToken, user});
-    }
-    catch(Error){
-        console.error("error in login",Error);
-        res.status(500).json({message:"Error while login",Error})
 
+        console.log(accessToken, user);
+        res.status(200).json({ token: accessToken, role: user.Role });
+
+    } catch (Error) {
+        console.error("Error in login", Error);
+        res.status(500).json({ message: "Error while logging in", Error });
     }
-}
+};
 const appliylifeinsurance=async(req,res)=>{
 
     try{

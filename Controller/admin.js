@@ -16,7 +16,8 @@ const adminagentregister = async (req, res) => {
         Role,
         Address,
       } = req.body;
-  
+      console.log("Incoming request body:", req.body); 
+
       // Check for missing fields
       if (!FirstName || !LastName || !Email || !Password || !MobileNo || !Address) {
         res.status(400);

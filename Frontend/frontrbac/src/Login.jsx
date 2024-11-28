@@ -8,7 +8,7 @@ const LoginForm = () => {
     Password: "",
   });
   const [message, setMessage] = useState("");
-  const navigate = useNavigate(); // Use navigate for redirection
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,11 +20,14 @@ const LoginForm = () => {
     try {
       const response = await axios.post("http://localhost:5000/user/login", formData);
 
-      // Store the token in local storage
+      // Destructure token and role from the response
       const { token, role } = response.data;
-      localStorage.setItem("authToken", token);
 
-      // Redirect based on role
+      // Store the token and role in local storage
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("userRole", role);
+
+      // Navigate based on role
       if (role === "Admin") {
         navigate("/admin");
       } else if (role === "Agent") {
@@ -40,6 +43,14 @@ const LoginForm = () => {
       setMessage(error.response?.data?.error || "Error occurred");
     }
   };
+
+  // Redirect based on role if already logged in
+  React.useEffect(() => {
+    const role = localStorage.getItem("userRole");
+    if (role === "Admin") navigate("/admin");
+    if (role === "Agent") navigate("/agent");
+    if (role === "User") navigate("/user");
+  }, [navigate]);
 
   return (
     <form onSubmit={handleSubmit}>

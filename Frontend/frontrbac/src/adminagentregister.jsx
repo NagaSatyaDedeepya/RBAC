@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const AdminAgentRegisterForm = () => {
+const RegisterUser = () => {
   const [formData, setFormData] = useState({
     FirstName: "",
     LastName: "",
     Email: "",
     Password: "",
     MobileNo: "",
-    Role: "User", // Default role
+    Role: "User", // Default role is 'User'
     Address: "",
   });
 
@@ -16,32 +16,56 @@ const AdminAgentRegisterForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
+    setFormData({ ...formData, [name]: value });
+  };const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Get the token from localStorage
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      setMessage("No authentication token found.");
+      return;
+    }
+
     try {
-      const response = await axios.post("http://localhost:5000/admin/registeradmin", formData);
-      setMessage(response.data); // Display success message
+      const response = await axios.post(
+        "http://localhost:5000/admin/registeradmin",
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "x-token": token, // Add token to the header
+          },
+        }
+      );
+
+      setMessage(response.data || "User registered successfully");
+      setFormData({
+        FirstName: "",
+        LastName: "",
+        Email: "",
+        Password: "",
+        MobileNo: "",
+        Role: "User",
+        Address: "",
+      });
     } catch (error) {
-      setMessage(error.response?.data?.message || "Error occurred while registering user");
+      setMessage(error.response?.data?.message || "Error registering user");
     }
   };
 
+
   return (
-    <div style={{ maxWidth: "400px", margin: "auto", marginTop: "50px" }}>
-      <h2>Register Admin/Agent</h2>
+    <div>
+      <h2>Register User</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label>First Name:</label>
           <input
             type="text"
             name="FirstName"
-            placeholder="Enter first name"
+            value={formData.FirstName}
             onChange={handleChange}
             required
           />
@@ -51,7 +75,7 @@ const AdminAgentRegisterForm = () => {
           <input
             type="text"
             name="LastName"
-            placeholder="Enter last name"
+            value={formData.LastName}
             onChange={handleChange}
             required
           />
@@ -61,7 +85,7 @@ const AdminAgentRegisterForm = () => {
           <input
             type="email"
             name="Email"
-            placeholder="Enter email"
+            value={formData.Email}
             onChange={handleChange}
             required
           />
@@ -71,35 +95,39 @@ const AdminAgentRegisterForm = () => {
           <input
             type="password"
             name="Password"
-            placeholder="Enter password"
+            value={formData.Password}
             onChange={handleChange}
             required
           />
         </div>
         <div>
-          <label>Mobile No:</label>
+          <label>Mobile Number:</label>
           <input
             type="text"
             name="MobileNo"
-            placeholder="Enter mobile number"
+            value={formData.MobileNo}
             onChange={handleChange}
             required
           />
         </div>
         <div>
           <label>Role:</label>
-          <select name="Role" value={formData.Role} onChange={handleChange}>
+          <select
+            name="Role"
+            value={formData.Role}
+            onChange={handleChange}
+            required
+          >
             <option value="User">User</option>
-            <option value="Admin">Admin</option>
             <option value="Agent">Agent</option>
+            <option value="Admin">Admin</option>
           </select>
         </div>
         <div>
           <label>Address:</label>
-          <input
-            type="text"
+          <textarea
             name="Address"
-            placeholder="Enter address"
+            value={formData.Address}
             onChange={handleChange}
             required
           />
@@ -111,4 +139,4 @@ const AdminAgentRegisterForm = () => {
   );
 };
 
-export default AdminAgentRegisterForm;
+export default RegisterUser;
