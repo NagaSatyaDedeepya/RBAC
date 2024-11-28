@@ -61,6 +61,11 @@ const LoginForm = () => {
     navigate("/login");
   };
 
+  const handleRegister = () => {
+    // Navigate to the registration page
+    navigate("/Register");
+  };
+
   return (
     <div>
       {localStorage.getItem("authToken") ? (
@@ -82,6 +87,11 @@ const LoginForm = () => {
           <button type="submit">Login</button>
           {message && <p>{message}</p>}
         </form>
+      )}
+
+      {/* Button to navigate to the Register page */}
+      {!localStorage.getItem("authToken") && (
+        <button onClick={handleRegister}>Go to Register</button>
       )}
     </div>
   );
